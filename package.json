@@ -1,0 +1,21 @@
+{
+  "name": "telegram-upload-serverless",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "pre:nvm": "bash -c 'source $HOME/.nvm/nvm.sh && nvm use && '\"$0\"",
+    "pre:env": "bash -c 'source ./.env && '\"$0\"",
+    "": "",
+    "dev": "python ./src/main.py",
+    "start": "gunicorn -w 1 'src.main:app' -b '0.0.0.0:3000'",
+    "login": "python ./src/login.py",
+    "create-function": "bash -c 'source ./.env && yc serverless function create --name=$FUNCTION_NAME'",
+    "deploy-function": "bash -c 'source ./.env && yc serverless function version create --function-name=$FUNCTION_NAME --runtime python39 --entrypoint hello.handler --memory 2gb --execution-timeout 5m --source-path ./src'",
+    "invoke-function": "bash -c 'source ./.env && yc serverless function invoke \"$FUNCTION_NAME\" --data \"{\\\"queryStringParameters\\\": {\\\"name\\\": \\\"Username\\\"}}\"'",
+    "cd": "yarn deploy-function",
+    "": "",
+    "ssh": "yarn pre:env 'sshpass -p $SERVER_PASSWORD ssh timeweb'",
+    "purge": "yarn pre:env 'sshpass -p $SERVER_PASSWORD ssh timeweb \"cd /root/telegram-upload && ls --almost-all | grep -xv node_modules | xargs rm -rf\"'",
+    "deploy": "yarn pre:env 'sshpass -p $SERVER_PASSWORD rsync -avzc --exclude=.git --exclude=node_modules --exclude=build --exclude=.yarn/cache . timeweb:/root/telegram-upload'"
+  }
+}
